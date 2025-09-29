@@ -10,6 +10,7 @@ async function main() {
     const cmd = argv._[0];
 
     try {
+        
         switch (cmd) {
             case 'commit':
                 await cmdCommit(process.env.ZENTAO_BASE_URL || argv['base-url'] || 'https://zentao.example.com');

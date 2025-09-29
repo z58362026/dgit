@@ -55,7 +55,7 @@ async function cmdCommit(baseUrl) {
     const header = `[${headerPrefix}:${headerIds}] ${firstLine}`;
 
     const ok = await confirmProceed(
-        `Will commit with header:\n${header}\n\nMessage body preview:\n${payload.message}\nProceed?`,
+        `Will commit with header:\n${header}\n\nMessage body preview:\n${payload.message}\n\nProceed?`,
     );
     if (!ok) return;
 

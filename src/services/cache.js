@@ -9,15 +9,14 @@ class CacheService {
         try {
             const raw = await fs.readFile(CACHE_FILE, 'utf8');
             const parsed = JSON.parse(raw);
-            if (parsed.expiresAt && Date.now() < parsed.expiresAt) return parsed;
-            return null;
+            return parsed;
         } catch {
             return null;
         }
     }
 
     async writeSession(s) {
-        await fs.writeFile(CACHE_FILE, JSON.stringify(s, null, 2), { mode: 0o600 });
+        await fs.writeFile(CACHE_FILE, JSON.stringify(s, null, 2), { mode: 0o600, encoding: 'utf8' });
     }
 
     async clear() {

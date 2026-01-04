@@ -5,9 +5,9 @@ async function selectCommitCategory() {
         {
             type: 'list',
             name: 'type',
-            message: 'Commit type:',
+            message: 'Commit 类型:',
             choices: [
-                { name: 'Requirement', value: 'requirement' },
+                { name: '需求', value: 'requirement' },
                 { name: 'Bug', value: 'bug' },
             ],
         },
@@ -15,17 +15,28 @@ async function selectCommitCategory() {
     return ans.type;
 }
 
+async function selectProducts(product) {
+    const choices = (product || []).map((b) => ({ name: `#${b.id} ${b.name}`, value: { id: b.id, name: b.name } }));
+    const ans = await inquirer.prompt([{ type: 'list', name: 'productInfo', message: '请选择 产品:', choices }]);
+    return ans.productInfo || { id: null, name: '' };
+}
+
+async function confirmLastProduct(message) {
+    const ans = await inquirer.prompt([{ type: 'confirm', name: 'ok', message, default: true }]);
+    return ans.ok;
+}
+
 async function selectBugs(bugs) {
     const choices = (bugs || []).map((b) => ({ name: `#${b.id} ${b.title}`, value: b.id }));
     const ans = await inquirer.prompt([
-        { type: 'checkbox', name: 'ids', message: 'Select bugs:', choices, pageSize: 15 },
+        { type: 'checkbox', name: 'ids', message: '请选择 bug（可多选）:', choices, pageSize: 15 },
     ]);
     return ans.ids || [];
 }
 
 async function inputMessage(defaultMsg = '') {
     const ans = await inquirer.prompt([
-        { type: 'input', name: 'msg', message: 'Additional commit message:', default: defaultMsg },
+        { type: 'input', name: 'msg', message: '请完善 commit 信息:', default: defaultMsg },
     ]);
     return ans.msg || '';
 }
@@ -37,10 +48,18 @@ async function confirmProceed(message) {
 
 async function promptLogin(defaultAccount = '') {
     const ans = await inquirer.prompt([
-        { type: 'input', name: 'account', message: 'ZenTao account:', default: defaultAccount },
-        { type: 'password', name: 'password', message: 'ZenTao password:' },
+        { type: 'input', name: 'account', message: '禅道 账号:', default: defaultAccount },
+        { type: 'password', name: 'password', message: '禅道 密码:' },
     ]);
     return ans;
 }
 
-module.exports = { selectCommitCategory, selectBugs, inputMessage, confirmProceed, promptLogin };
+module.exports = {
+    selectCommitCategory,
+    selectProducts,
+    selectBugs,
+    inputMessage,
+    confirmProceed,
+    promptLogin,
+    confirmLastProduct,
+};

@@ -10,10 +10,11 @@ async function main() {
     const cmd = argv._[0];
 
     try {
-        
         switch (cmd) {
             case 'commit':
-                await cmdCommit(process.env.ZENTAO_BASE_URL || argv['base-url'] || 'https://zentao.example.com');
+                await cmdCommit(
+                    process.env.ZENTAO_BASE_URL || argv['base-url'] || 'https://rizentao.gientech.com/api.php/v1',
+                );
                 break;
             case 'status': {
                 const res = await gitStatus();
@@ -31,7 +32,8 @@ async function main() {
                 break;
             }
             case 'login': {
-                const base = process.env.ZENTAO_BASE_URL || argv['base-url'] || 'https://zentao.example.com';
+                const base =
+                    process.env.ZENTAO_BASE_URL || argv['base-url'] || 'https://rizentao.gientech.com/api.php/v1';
                 const cred = await promptLogin(process.env.ZENTAO_ACCOUNT || '');
                 const client = new ZenTaoClient(base);
                 await client.login(cred.account, cred.password);
@@ -39,7 +41,8 @@ async function main() {
                 break;
             }
             case 'logout': {
-                const base = process.env.ZENTAO_BASE_URL || argv['base-url'] || 'https://zentao.example.com';
+                const base =
+                    process.env.ZENTAO_BASE_URL || argv['base-url'] || 'https://rizentao.gientech.com/api.php/v1';
                 const client = new ZenTaoClient(base);
                 await client.logout();
                 console.log('Logged out and cache cleared.');

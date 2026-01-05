@@ -1,7 +1,9 @@
 const {
     selectCommitCategory,
     confirmLastProduct,
+    confirmLastProject,
     selectBugs,
+    selectStories,
     inputMessage,
     confirmProceed,
     promptLogin,
@@ -73,7 +75,7 @@ async function cmdCommit(baseUrl) {
         const needsNewProduct =
             !client.ZenTaoInfo.productId ||
             !(await confirmLastProduct(
-                `是否继续使用产品#${client.ZenTaoInfo.productId} ${client.ZenTaoInfo.productName}获取bug列表?`,
+                `是否继续使用产品 #${client.ZenTaoInfo.productId} ${client.ZenTaoInfo.productName} 获取 bug 列表?`,
             ));
         // 需要时获取新产品
         if (needsNewProduct) {
@@ -84,18 +86,31 @@ async function cmdCommit(baseUrl) {
 
         if (!bugs || bugs.length === 0) {
             console.log('当前产品下无bug.');
-            const cont = await confirmProceed('是否不带bug id继续提交?');
-            if (!cont) return;
         } else {
             const ids = await selectBugs(bugs);
             payload.issueIds = ids;
         }
     } else {
-        const idsInput = await inputMessage('enter requirement ids separated by comma (e.g. 123,456)');
-        payload.issueIds = idsInput
-            .split(',')
-            .map((s) => parseInt(s.trim(), 10))
-            .filter(Boolean);
+        let stories;
+        // 判断是否需要获取新项目
+        const needsNewProject =
+            !client.ZenTaoInfo.projectId ||
+            !(await confirmLastProject(
+                `是否继续使用项目 #${client.ZenTaoInfo.projectId} ${client.ZenTaoInfo.projectName} 获取 需求 列表?`,
+            ));
+        // 需要时获取新产品
+        if (needsNewProject) {
+            await client.getProject();
+        }
+        // 获取需求列表
+        stories = await client.getStories();
+
+        if (!stories || stories.length === 0) {
+            console.log('当前项目下无需求.');
+        } else {
+            const id = await selectStories(stories);
+            payload.issueIds = [id];
+        }
     }
 
     const custom = (await inputMessage('commit 信息')).trim();

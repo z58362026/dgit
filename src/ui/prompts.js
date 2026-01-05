@@ -34,6 +34,23 @@ async function selectBugs(bugs) {
     return ans.ids || [];
 }
 
+async function selectProjects(project) {
+    const choices = (project || []).map((b) => ({ name: `#${b.id} ${b.name}`, value: { id: b.id, name: b.name } }));
+    const ans = await inquirer.prompt([{ type: 'list', name: 'projectInfo', message: '请选择 项目:', choices }]);
+    return ans.projectInfo || { id: null, name: '' };
+}
+
+async function confirmLastProject(message) {
+    const ans = await inquirer.prompt([{ type: 'confirm', name: 'ok', message, default: true }]);
+    return ans.ok;
+}
+
+async function selectStories(stories) {
+    const choices = (stories || []).map((b) => ({ name: `#${b.id} ${b.title}`, value: b.id }));
+    const ans = await inquirer.prompt([{ type: 'list', name: 'story', message: '请选择 需求:', choices }]);
+    return ans.story || '';
+}
+
 async function inputMessage(defaultMsg = '') {
     const ans = await inquirer.prompt([
         { type: 'input', name: 'msg', message: '请完善 commit 信息:', default: defaultMsg },
@@ -57,9 +74,12 @@ async function promptLogin(defaultAccount = '') {
 module.exports = {
     selectCommitCategory,
     selectProducts,
+    confirmLastProduct,
     selectBugs,
+    selectProjects,
+    confirmLastProject,
+    selectStories,
     inputMessage,
     confirmProceed,
     promptLogin,
-    confirmLastProduct,
 };

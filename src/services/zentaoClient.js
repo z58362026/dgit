@@ -1,6 +1,6 @@
 const axios = require('axios');
 const CacheService = require('./cache');
-const { selectProducts } = require('../ui/prompts');
+const { selectProducts, selectProjects } = require('../ui/prompts');
 
 class ZenTaoClient {
     constructor(baseURL) {
@@ -10,6 +10,8 @@ class ZenTaoClient {
             password: '',
             productId: null,
             productName: '',
+            projectId: null,
+            projectName: '',
         };
         this.baseURL = (baseURL || '').replace(/\/+$/, '');
         this.axios = axios.create({ baseURL: this.baseURL, timeout: 10000 });
@@ -112,6 +114,33 @@ class ZenTaoClient {
     async getBugs() {
         const res = await this.axios.get(`/products/${this.ZenTaoInfo.productId}/bugs?limit=9999&page=1`);
         return res.data?.bugs || [];
+    }
+
+    // 获取项目列表
+    async getProject() {
+        const res = await this.axios.get('/projects?limit=9999&page=1');
+        const projects = res.data.projects || [];
+        const handledProjects = projects.map((item) => {
+            const { id, name } = item;
+            return {
+                id,
+                name,
+            };
+        });
+        const projectInfo = await selectProjects(handledProjects);
+        this.ZenTaoInfo = {
+            ...this.ZenTaoInfo,
+            projectId: projectInfo.id,
+            projectName: projectInfo.name,
+        };
+        await this.cache.writeSession(this.ZenTaoInfo);
+        console.log('选择的项目:', this.ZenTaoInfo.projectId, this.ZenTaoInfo.projectName);
+    }
+
+    // 获取需求列表
+    async getStories() {
+        const res = await this.axios.get(`/projects/${this.ZenTaoInfo.projectId}/stories`);
+        return res.data?.stories || [];
     }
 }
 

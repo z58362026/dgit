@@ -1,7 +1,7 @@
 {
     "name": "zentao-git-cli",
     "version": "1.0.0",
-    "description": "A CLI for Git operations integrated with ZenTao API",
+    "description": "一个集成了ZenTao API的Git操作命令行",
     "main": "dist/cli.js",
     "bin": {
         "zg": "dist/cli.js"
@@ -24,7 +24,7 @@
         "zentao",
         "cli"
     ],
-    "author": "Your Name",
+    "author": "y",
     "license": "MIT",
     "dependencies": {
         "axios": "^1.4.0",

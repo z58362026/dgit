@@ -5,6 +5,8 @@ const { gitStatus, gitPull, gitPush } = require('./utils/git');
 const { promptLogin } = require('./ui/prompts');
 const ZenTaoClient = require('./services/zentaoClient');
 
+process.env.ZENTAO_BASE_URL = 'https://rizentao.gientech.com/api.php/v1';
+
 async function main() {
     const argv = minimist(process.argv.slice(2));
     const cmd = argv._[0];
@@ -12,9 +14,7 @@ async function main() {
     try {
         switch (cmd) {
             case 'commit':
-                await cmdCommit(
-                    process.env.ZENTAO_BASE_URL || argv['base-url'] || 'https://rizentao.gientech.com/api.php/v1',
-                );
+                await cmdCommit(process.env.ZENTAO_BASE_URL || 'https://rizentao.gientech.com/api.php/v1');
                 break;
             case 'status': {
                 const res = await gitStatus();
@@ -32,24 +32,22 @@ async function main() {
                 break;
             }
             case 'login': {
-                const base =
-                    process.env.ZENTAO_BASE_URL || argv['base-url'] || 'https://rizentao.gientech.com/api.php/v1';
-                const cred = await promptLogin(process.env.ZENTAO_ACCOUNT || '');
+                const base = process.env.ZENTAO_BASE_URL || 'https://rizentao.gientech.com/api.php/v1';
+                const cred = await promptLogin();
                 const client = new ZenTaoClient(base);
                 await client.login(cred.account, cred.password);
-                console.log('Login successful and cached.');
+                console.log('登录成功.');
                 break;
             }
             case 'logout': {
-                const base =
-                    process.env.ZENTAO_BASE_URL || argv['base-url'] || 'https://rizentao.gientech.com/api.php/v1';
+                const base = process.env.ZENTAO_BASE_URL || 'https://rizentao.gientech.com/api.php/v1';
                 const client = new ZenTaoClient(base);
                 await client.logout();
-                console.log('Logged out and cache cleared.');
+                console.log('登出成功.');
                 break;
             }
             default:
-                console.log('Usage: zg <commit|status|pull|push|login|logout> [--base-url]');
+                console.log('Usage: zg <commit|status|pull|push|login|logout> [--args]');
         }
     } catch (err) {
         console.error('Error:', err && err.message ? err.message : err);

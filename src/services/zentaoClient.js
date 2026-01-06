@@ -25,7 +25,7 @@ class ZenTaoClient {
     // 配置登录信息
     async loadCachedSession() {
         const cached = await this.cache.readSession();
-        // console.log('获取到缓存token信息：', cached, '\n');
+        console.log('获取到缓存token信息：', cached, '\n');
         if (cached) {
             this.ZenTaoInfo = {
                 ...cached,
